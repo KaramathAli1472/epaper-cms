@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import { auth, db, storage } from './firebase';
+import 'font-awesome/css/font-awesome.min.css'
 
 const app = createApp(App);
 
