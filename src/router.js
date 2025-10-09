@@ -8,8 +8,8 @@ import AppShell from './layouts/AppShell.vue';
 import ReaderView from './components/ReaderView.vue';
 import EpaperView from './views/EpaperView.vue';
 import ChangePassword from './views/ChangePassword.vue';
-import PageManager from './views/PageManager.vue';   
-import SlideshowsManager from './views/SlideshowsManager.vue'; 
+import PageManager from './views/PageManager.vue';
+import SlideshowsManager from './views/SlideshowsManager.vue';
 import MediaManager from './views/MediaManager.vue';
 
 const routes = [
@@ -26,7 +26,7 @@ const routes = [
   {
     path: '/admin/app',
     component: AppShell,
-    meta: { requiresAuth: true }, // ✅ protect admin routes
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'dashboard',
@@ -39,29 +39,39 @@ const routes = [
         component: EpaperView
       },
       {
+        path: 'epaper/categories',
+        name: 'CategoryManager',
+        component: () => import('@/views/epaper/CategoryManager.vue')
+      },
+      {
+        path: 'epaper/categories/new',
+        name: 'CategoryCreate',
+        component: () => import('@/views/epaper/CategoryForm.vue')
+      },
+      {
         path: 'page',
         name: 'admin-page',
-        component: PageManager, // 👈 yahan add karo
+        component: PageManager,
         meta: { requiresAuth: true }
       },
       {
-  path: 'slider',
-  name: 'admin-slider',
-  component: SlideshowsManager,
-  meta: { requiresAuth: true }
-},
-{
-  path: 'media',
-  name: 'admin-media',
-  component: MediaManager,
-  meta: { requiresAuth: true }
-},
-{
-  path: 'users',
-  name: 'admin-users',
-  component: () => import('@/views/UsersManager.vue'),
-  meta: { requiresAuth: true }
-},
+        path: 'slider',
+        name: 'admin-slider',
+        component: SlideshowsManager,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'media',
+        name: 'admin-media',
+        component: MediaManager,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'users',
+        name: 'admin-users',
+        component: () => import('@/views/UsersManager.vue'),
+        meta: { requiresAuth: true }
+      },
       {
         path: 'change-password',
         name: 'admin-change-password',
