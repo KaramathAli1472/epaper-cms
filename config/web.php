@@ -14,7 +14,7 @@ $config = [
     'components' => [
         'request' => [
             'cookieValidationKey' => 'epaper-cms-2025-ali-hyderabad-secret-key-123456789',
-
+            'baseUrl' => '',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -29,7 +29,6 @@ $config = [
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',
-            // send all mails to a file by default.
             'useFileTransport' => true,
         ],
         'log' => [
@@ -37,11 +36,54 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info', 'trace'],
+                    'logVars' => [],
                 ],
             ],
         ],
         'db' => $db,
+
+        // ⬇️ Bootstrap 5 assets yahan add kiye
+        'assetManager' => [
+            'appendTimestamp' => true,
+            'basePath' => '@webroot/assets',
+            'baseUrl'  => '@web/assets',
+            'bundles' => [
+                // Purana Bootstrap disable
+                'yii\bootstrap\BootstrapAsset' => [
+                    'css' => [],
+                    'js'  => [],
+                ],
+                'yii\bootstrap\BootstrapPluginAsset' => [
+                    'css' => [],
+                    'js'  => [],
+                ],
+                'yii\bootstrap4\BootstrapAsset' => [
+                    'css' => [],
+                    'js'  => [],
+                ],
+                'yii\bootstrap4\BootstrapPluginAsset' => [
+                    'css' => [],
+                    'js'  => [],
+                ],
+
+                // Bootstrap 5 enable
+                'yii\bootstrap5\BootstrapAsset' => [
+                    'class' => 'yii\bootstrap5\BootstrapAsset',
+                ],
+                'yii\bootstrap5\BootstrapPluginAsset' => [
+                    'class' => 'yii\bootstrap5\BootstrapPluginAsset',
+                ],
+
+                // jQuery bundle (agar chahiye)
+                'yii\web\JqueryAsset' => [
+                    'js' => [
+                        YII_ENV_DEV ? 'jquery.js' : 'jquery.min.js',
+                    ],
+                ],
+            ],
+        ],
+
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -55,19 +97,9 @@ $config = [
 ];
 
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'debug';
-    $config['modules']['debug'] = [
-        'class' => 'yii\debug\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
-    ];
-
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
 

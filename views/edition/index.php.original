@@ -1,0 +1,81 @@
+# Backup current
+cp /home/ali/epaper-cms/views/edition/index.php /home/ali/epaper-cms/views/edition/index.php.original
+
+# Create simplified version
+cat > /home/ali/epaper-cms/views/edition/index.php << 'EOF'
+<?php
+use yii\helpers\Html;
+
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $epaper app\models\EpaperCategory|null */
+/* @var $pageTitle string */
+
+$this->title = $pageTitle ?: 'Edition Manager';
+?>
+
+<div class="edition-index">
+    <h1><?= Html::encode($this->title) ?></h1>
+    
+    <p>
+        <?= Html::a('New Edition', 
+            ['create', 'epaper_id' => $epaper ? $epaper->id : 1], 
+            ['class' => 'btn btn-success']) ?>
+        
+        <?= Html::a('Back to E-Papers', ['epaper-category/index'], [
+            'class' => 'btn btn-secondary'
+        ]) ?>
+    </p>
+    
+    <?php
+    // Simple manual table instead of GridView
+    $models = $dataProvider->getModels();
+    if (count($models) > 0): ?>
+        <table class="table table-bordered">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Alias</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            <?php foreach ($models as $index => $model): ?>
+            <tr>
+                <td><?= $index + 1 ?></td>
+                <td><?= Html::encode($model->title) ?></td>
+                <td><?= Html::encode($model->alias) ?></td>
+                <td><?= $model->category ?: 'General' ?></td>
+                <td><?= date('d-m-Y', strtotime($model->date)) ?></td>
+                <td>
+                    <?php
+                    $status = $model->status;
+                    if ($status == 'draft') echo '<span class="badge bg-secondary">Draft</span>';
+                    elseif ($status == 'scheduled') echo '<span class="badge bg-warning">Scheduled</span>';
+                    elseif ($status == 'private') echo '<span class="badge bg-danger">Private</span>';
+                    elseif ($status == 'published') echo '<span class="badge bg-success">Published</span>';
+                    else echo '<span class="badge bg-info">' . ucfirst($status) . '</span>';
+                    ?>
+                </td>
+                <td>
+                    <?= Html::a('View', ['view', 'id' => $model->id], ['class' => 'btn btn-sm btn-info']) ?>
+                    <?= Html::a('Edit', ['update', 'id' => $model->id], ['class' => 'btn btn-sm btn-primary']) ?>
+                    <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                        'class' => 'btn btn-sm btn-danger',
+                        'data' => [
+                            'confirm' => 'Are you sure?',
+                            'method' => 'post',
+                        ],
+                    ]) ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php else: ?>
+        <div class="alert alert-info">
+            No editions found. Create your first edition!
+        </div>
+    <?php endif; ?>
+</div>
+EOF

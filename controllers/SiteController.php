@@ -9,12 +9,10 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\EpaperCategory;
 
 class SiteController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
     public function behaviors()
     {
         return [
@@ -38,9 +36,6 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function actions()
     {
         return [
@@ -55,29 +50,36 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
+     * MAIN WEBSITE HOMEPAGE (NO SIDEBAR)
+     * Sirf published categories show hongi
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $this->layout = false; // ✅ sidebar remove
+
+        $categories = EpaperCategory::find()
+            ->where(['is_published' => 1])
+            ->andWhere(['parent_id' => null])
+            ->orderBy(['id' => SORT_ASC])
+            ->all();
+
+        return $this->render('index', [
+            'categories' => $categories,
+        ]);
     }
 
     /**
-     * Login action.
-     *
-     * @return Response|string
+     * LOGIN
      */
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            return $this->redirect(['dashboard/index']);
         }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->redirect(['dashboard/index']);
         }
 
         $model->password = '';
@@ -87,28 +89,19 @@ class SiteController extends Controller
     }
 
     /**
-     * Logout action.
-     *
-     * @return Response
+     * LOGOUT
      */
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
-        return $this->goHome();
+        return $this->redirect(['site/index']);
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
     public function actionContact()
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
-
             return $this->refresh();
         }
         return $this->render('contact', [
@@ -116,13 +109,9 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
     public function actionAbout()
     {
         return $this->render('about');
     }
 }
+
